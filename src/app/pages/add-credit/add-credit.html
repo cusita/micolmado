@@ -1,0 +1,30 @@
+<div class="page">
+  <header class="page__header">
+    <button class="back-btn" routerLink="/">←</button>
+    <h2>Agregar fiado</h2>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="form">
+    <label class="field">
+      <span>Nombre del cliente</span>
+      <input type="text" formControlName="customerName" />
+      <small *ngIf="customerInvalid">Escribe el nombre del cliente.</small>
+    </label>
+
+    <label class="field">
+      <span>Monto fiado (RD$)</span>
+      <input type="number" formControlName="amount" inputmode="decimal" />
+      <small *ngIf="amountInvalid">Ingresa un monto mayor a 0.</small>
+    </label>
+
+    <label class="field">
+      <span>Nota (opcional)</span>
+      <textarea formControlName="note" rows="2"></textarea>
+    </label>
+
+    <div class="actions">
+      <button type="button" class="btn btn--secondary" (click)="cancel()">Cancelar</button>
+      <button type="submit" class="btn btn--primary">Guardar</button>
+    </div>
+  </form>
+</div>

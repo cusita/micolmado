@@ -1,0 +1,33 @@
+<div class="page">
+  <header class="page__header">
+    <button class="back-btn" routerLink="/">←</button>
+    <h2>Resumen del día</h2>
+  </header>
+
+  <div class="card">
+    <span>Vendido hoy</span>
+    <strong>RD$ {{ summary.totalSales }}</strong>
+  </div>
+
+  <div class="card">
+    <span>Fiado hoy</span>
+    <strong>RD$ {{ summary.totalCreditSales }}</strong>
+  </div>
+
+  <div class="card">
+    <span>Cobrado de fiado</span>
+    <strong>RD$ {{ summary.totalCreditPayments }}</strong>
+  </div>
+
+  <div class="card">
+    <span>Pago a proveedores</span>
+    <strong>RD$ {{ summary.totalSupplierPayments }}</strong>
+  </div>
+
+  <div class="card total">
+    <span>Ganancia estimada</span>
+    <strong>RD$ {{ summary.estimatedProfit }}</strong>
+  </div>
+
+  <a routerLink="/" class="back">← Volver</a>
+</div>

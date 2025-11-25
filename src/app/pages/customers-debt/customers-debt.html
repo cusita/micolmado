@@ -1,0 +1,29 @@
+<div class="page">
+  <header class="page__header">
+    <button class="back-btn" routerLink="/">←</button>
+
+    <h2>Clientes fiados</h2>
+  </header>
+
+  <p *ngIf="customers.length === 0" class="empty">
+    No hay clientes con deudas registradas por ahora.
+  </p>
+
+  <ul *ngIf="customers.length > 0" class="list">
+    <li *ngFor="let c of customers" class="item">
+      <div class="item__header">
+        <span class="item__name">{{ c.customerName }}</span>
+        <span class="item__balance">
+          Debe: <strong>RD$ {{ c.balance | number : '1.0-0' }}</strong>
+        </span>
+      </div>
+
+      <div class="item__details">
+        <span> Fiado: RD$ {{ c.totalCredit | number : '1.0-0' }} </span>
+        <span> Ha pagado: RD$ {{ c.totalPayments | number : '1.0-0' }} </span>
+      </div>
+    </li>
+  </ul>
+
+  <a routerLink="/" class="back">← Volver al inicio</a>
+</div>

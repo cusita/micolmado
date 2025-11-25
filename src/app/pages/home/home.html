@@ -1,0 +1,62 @@
+<div class="home">
+  <header class="home__header">
+    <div class="home__title">
+      <span class="home__logo">🧾</span>
+      <div>
+        <h1>Mi Colmado</h1>
+        <p>Control diario de ventas, fiado y gastos.</p>
+      </div>
+    </div>
+
+    <div class="home__summary" *ngIf="todaySummary">
+      <div class="summary-card">
+        <span class="summary-card__label">Vendido hoy</span>
+        <span class="summary-card__value">
+          RD$ {{ todaySummary.totalSales | number : '1.0-0' }}
+        </span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-card__label">Fiado hoy</span>
+        <span class="summary-card__value">
+          RD$ {{ todaySummary.totalCreditSales | number : '1.0-0' }}
+        </span>
+      </div>
+      <div class="summary-card summary-card--highlight">
+        <span class="summary-card__label">Ganancia estimada</span>
+        <span class="summary-card__value">
+          RD$ {{ todaySummary.estimatedProfit | number : '1.0-0' }}
+        </span>
+      </div>
+    </div>
+
+    <a routerLink="/resumen" class="home__link">
+      Ver detalle de ganancias de hoy →
+    </a>
+  </header>
+
+  <main class="home__grid">
+    <a class="card card--primary" routerLink="/venta">
+      <div class="card__icon">💵</div>
+      <div class="card__title">Agregar vendido</div>
+      <div class="card__subtitle">Registrar el total vendido del día.</div>
+    </a>
+
+    <a class="card card--primary" routerLink="/fiado">
+      <div class="card__icon">📝</div>
+      <div class="card__title">Agregar fiado</div>
+      <div class="card__subtitle">Registrar lo que quedó apuntado.</div>
+    </a>
+
+    <a class="card card--secondary" routerLink="/clientes-fiados">
+      <div class="card__icon">👥</div>
+      <div class="card__title">Clientes fiados</div>
+      <div class="card__subtitle">Ver quién debe y cuánto debe.</div>
+    </a>
+
+    <a class="card card--secondary" routerLink="/resumen">
+      <div class="card__icon">📊</div>
+      <div class="card__title">Ver ganancias</div>
+      <div class="card__subtitle">Resumen rápido del día.</div>
+    </a>
+  </main>
+</div>
