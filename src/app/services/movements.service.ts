@@ -67,6 +67,47 @@ export class MovementsService {
     });
   }
 
+  renameCustomer(oldName: string, newName: string): void {
+    const trimmedOld = oldName.trim();
+    const trimmedNew = newName.trim();
+
+    if (!trimmedNew) {
+      throw new Error('El nombre nuevo no puede estar vacío.');
+    }
+
+    const movements = this.getAll();
+    let updated = false;
+
+    for (const movement of movements) {
+      if (movement.customerName && movement.customerName === trimmedOld) {
+        movement.customerName = trimmedNew;
+        updated = true;
+      }
+    }
+
+    if (!updated) {
+      throw new Error('No se encontraron movimientos para ese cliente.');
+    }
+
+    this.saveAll(movements);
+  }
+
+  deleteCustomerRecords(customerName: string): void {
+    const trimmed = customerName.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    const movements = this.getAll();
+    const filtered = movements.filter((movement) => movement.customerName !== trimmed);
+
+    if (filtered.length === movements.length) {
+      return;
+    }
+
+    this.saveAll(filtered);
+  }
+
   getDailySummary(date: string): DailySummary {
     const movements = this.getAll().filter((movement) => movement.date === date);
     const totals = movements.reduce(

@@ -24,6 +24,9 @@ export class Suppliers implements OnInit {
   private allSuppliers: Supplier[] = [];
   suppliers: Supplier[] = [];
 
+  /** si no es null, estamos editando este proveedor */
+  editingSupplier: Supplier | null = null;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly suppliersService: SuppliersService
@@ -60,6 +63,7 @@ export class Suppliers implements OnInit {
     return !!c && c.invalid && (c.dirty || c.touched);
   }
 
+  /** guardar: crea o actualiza según estemos en modo edición o no */
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -69,26 +73,82 @@ export class Suppliers implements OnInit {
     const { name, contact, description, note } = this.form.getRawValue();
 
     try {
-      this.suppliersService.addSupplier(
-        name,
-        contact,
-        description,
-        note || undefined
-      );
+      if (this.editingSupplier) {
+        // 🔁 ACTUALIZAR
+        const updated: Supplier = {
+          ...this.editingSupplier,
+          name,
+          contact,
+          description,
+          note: note || undefined,
+        };
+        this.suppliersService.updateSupplier(updated);
+        this.editingSupplier = null;
+      } else {
+        // 🆕 CREAR
+        this.suppliersService.addSupplier(
+          name,
+          contact,
+          description,
+          note || undefined
+        );
+      }
+
       this.form.reset({
         name: '',
         contact: '',
         description: '',
         note: '',
       });
+
       this.loadSuppliers();
     } catch (error: any) {
       alert(error?.message ?? 'No se pudo guardar el proveedor.');
     }
   }
 
+  /** empezar a editar un proveedor existente */
+  startEdit(supplier: Supplier): void {
+    this.editingSupplier = supplier;
+    this.form.setValue({
+      name: supplier.name,
+      contact: supplier.contact,
+      description: supplier.description,
+      note: supplier.note ?? '',
+    });
+    // subimos el scroll al formulario si hace falta
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /** cancelar la edición y volver a modo creación */
+  cancelEdit(): void {
+    this.editingSupplier = null;
+    this.form.reset({
+      name: '',
+      contact: '',
+      description: '',
+      note: '',
+    });
+  }
+
   toggleActive(supplier: Supplier): void {
     this.suppliersService.toggleActive(supplier.id);
+    this.loadSuppliers();
+  }
+
+  deleteSupplier(supplier: Supplier): void {
+    const ok = confirm(
+      `¿Seguro que quieres eliminar al proveedor "${supplier.name}"?`
+    );
+    if (!ok) return;
+
+    this.suppliersService.deleteSupplier(supplier.id);
+
+    // si justo lo estabas editando, sal del modo edición
+    if (this.editingSupplier && this.editingSupplier.id === supplier.id) {
+      this.cancelEdit();
+    }
+
     this.loadSuppliers();
   }
 

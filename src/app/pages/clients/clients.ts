@@ -17,6 +17,7 @@ export class Clients implements OnInit {
   form: FormGroup;
   private allClients: Client[] = [];
   clients: Client[] = [];
+  editingClient: Client | null = null;
 
   constructor(private readonly fb: FormBuilder, private readonly clientsService: ClientsService) {
     this.form = this.fb.nonNullable.group({
@@ -32,7 +33,7 @@ export class Clients implements OnInit {
 
   loadClients(): void {
     this.allClients = this.clientsService.getAll();
-    this.clients = this.clientsService.getAll();
+    this.clients = this.allClients.slice();
   }
 
   get codeInvalid(): boolean {
@@ -69,9 +70,33 @@ export class Clients implements OnInit {
     }
 
     const { code, name, note } = this.form.getRawValue();
+    const trimmedCode = code.trim();
+    const trimmedName = name.trim();
+    const trimmedNote = note?.trim() || undefined;
 
     try {
-      this.clientsService.addClient(code, name, note || undefined);
+      if (this.editingClient) {
+        const duplicated = this.allClients.some(
+          (client) => client.id !== this.editingClient!.id && client.code === trimmedCode
+        );
+
+        if (duplicated) {
+          throw new Error('Ya existe un cliente con ese número');
+        }
+
+        const updated: Client = {
+          ...this.editingClient,
+          code: trimmedCode,
+          name: trimmedName,
+          note: trimmedNote,
+        };
+
+        this.clientsService.updateClient(updated);
+        this.editingClient = null;
+      } else {
+        this.clientsService.addClient(trimmedCode, trimmedName, trimmedNote);
+      }
+
       this.form.reset({ code: '', name: '', note: '' });
       this.loadClients();
     } catch (error: any) {
@@ -79,8 +104,40 @@ export class Clients implements OnInit {
     }
   }
 
+  startEdit(client: Client): void {
+    this.editingClient = client;
+    this.form.setValue({
+      code: client.code,
+      name: client.name,
+      note: client.note ?? '',
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelEdit(): void {
+    this.editingClient = null;
+    this.form.reset({ code: '', name: '', note: '' });
+  }
+
   toggleActive(client: Client): void {
     this.clientsService.toggleActive(client.id);
+    this.loadClients();
+  }
+
+  deleteClient(client: Client): void {
+    const ok = confirm(`¿Seguro que quieres eliminar al cliente "${client.name}"?`);
+    if (!ok) {
+      return;
+    }
+
+    this.clientsService.deleteClient(client.id);
+
+    if (this.editingClient && this.editingClient.id === client.id) {
+      this.cancelEdit();
+    } else {
+      this.form.reset({ code: '', name: '', note: '' });
+    }
+
     this.loadClients();
   }
 }

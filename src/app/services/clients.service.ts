@@ -68,6 +68,15 @@ export class ClientsService {
     this.saveAll(clients);
   }
 
+  deleteClient(id: string): void {
+    const clients = this.getAll();
+    const next = clients.filter((client) => client.id !== id);
+    if (next.length === clients.length) {
+      return;
+    }
+    this.saveAll(next);
+  }
+
   private isClientCandidate(value: unknown): value is Client {
     if (!value || typeof value !== 'object') return false;
     const c = value as Partial<Client>;

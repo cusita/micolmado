@@ -1,8 +1,6 @@
 <div class="page">
   <header class="page__header">
-    <button type="button" class="back-btn" routerLink="/">
-      ←
-    </button>
+    <button type="button" class="back-btn" routerLink="/">←</button>
     <h2>Proveedores</h2>
   </header>
 
@@ -14,9 +12,7 @@
         <label class="field">
           <span>Nombre</span>
           <input type="text" formControlName="name" />
-          <small *ngIf="nameInvalid">
-            Escribe el nombre del proveedor.
-          </small>
+          <small *ngIf="nameInvalid"> Escribe el nombre del proveedor. </small>
         </label>
 
         <label class="field">
@@ -26,9 +22,7 @@
             formControlName="contact"
             placeholder="Teléfono, WhatsApp, correo..."
           />
-          <small *ngIf="contactInvalid">
-            Escribe un contacto válido.
-          </small>
+          <small *ngIf="contactInvalid"> Escribe un contacto válido. </small>
         </label>
       </div>
 
@@ -39,9 +33,7 @@
           formControlName="description"
           placeholder="Huevos, arroz, refrescos, etc."
         />
-        <small *ngIf="descriptionInvalid">
-          Describe qué te provee este proveedor.
-        </small>
+        <small *ngIf="descriptionInvalid"> Describe qué te provee este proveedor. </small>
       </label>
 
       <label class="field">
@@ -54,10 +46,20 @@
       </label>
 
       <div class="actions">
+        <button
+          *ngIf="editingSupplier"
+          type="button"
+          class="btn btn--secondary"
+          (click)="cancelEdit()"
+        >
+          Cancelar
+        </button>
+
         <button type="submit" class="btn btn--primary">
-          Guardar
+          {{ editingSupplier ? 'Guardar cambios' : 'Guardar' }}
         </button>
       </div>
+      >
     </form>
   </section>
 
@@ -75,20 +77,27 @@
     </p>
 
     <ul *ngIf="suppliers.length > 0" class="list">
-      <li
-        *ngFor="let s of suppliers"
-        class="item"
-        [class.item--inactive]="!s.isActive"
-      >
+      <li *ngFor="let s of suppliers" class="item" [class.item--inactive]="!s.isActive">
         <div class="item__header">
-          <span class="item__name">{{ s.name }}</span>
-          <button
-            type="button"
-            class="status-btn"
-            (click)="toggleActive(s)"
-          >
-            {{ s.isActive ? 'Activo' : 'Inactivo' }}
-          </button>
+          <div>
+            <span class="item__name">{{ s.name }}</span>
+            <span class="item__badge" *ngIf="!s.isActive">Inactivo</span>
+          </div>
+
+          <div class="item__actions">
+            <button type="button" class="btn-icon" (click)="startEdit(s)" title="Editar proveedor">
+              ✏️
+            </button>
+
+            <button
+              type="button"
+              class="btn-icon btn-icon--danger"
+              (click)="deleteSupplier(s)"
+              title="Eliminar proveedor"
+            >
+              🗑️
+            </button>
+          </div>
         </div>
 
         <div class="item__line">

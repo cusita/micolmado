@@ -23,12 +23,7 @@ export class SuppliersService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(suppliers));
   }
 
-  addSupplier(
-    name: string,
-    contact: string,
-    description: string,
-    note?: string
-  ): Supplier {
+  addSupplier(name: string, contact: string, description: string, note?: string): Supplier {
     const cleanName = name.trim();
     const cleanContact = contact.trim();
     const cleanDescription = description.trim();
@@ -67,6 +62,12 @@ export class SuppliersService {
     if (index === -1) return;
     suppliers[index].isActive = !suppliers[index].isActive;
     this.saveAll(suppliers);
+  }
+
+  deleteSupplier(id: string): void {
+    const suppliers = this.getAll();
+    const filtered = suppliers.filter((s) => s.id !== id);
+    this.saveAll(filtered);
   }
 
   private isSupplierCandidate(value: unknown): value is Supplier {
