@@ -1,84 +1,229 @@
 <div class="home">
-  <header class="home__header">
-    <div class="home__title">
-      <span class="home__logo">🧾</span>
-      <div>
-        <h1>Mi Colmado</h1>
-        <p>Control diario de ventas, fiado y gastos.</p>
+  <header class="home__hero">
+    <div class="hero-card hero-card--brand">
+      <span class="hero-card__eyebrow">Panel principal</span>
+      <div class="hero-card__title">
+        <span class="hero-card__logo">🧾</span>
+        <div>
+          <h1>Mi Colmado</h1>
+          <p>Control diario de ventas, fiado y gastos.</p>
+        </div>
+      </div>
+      <p class="hero-card__subtitle">
+        Consolida tus números del día, cobra pendientes y anticipa el cierre sin salir de este panel.
+      </p>
+      <div class="hero-card__cta">
+        <a routerLink="/venta" class="hero-card__button hero-card__button--primary">
+          Registrar venta +
+        </a>
+        <button type="button" class="hero-card__button hero-card__button--ghost" routerLink="/fiado">
+          Registrar fiado +
+        </button>
+      </div>
+      <div class="hero-card__badges">
+        <span class="status-badge status-badge--positive">+8% vs ayer</span>
+        <span class="status-badge status-badge--neutral">Cierre diario 11:00 p. m.</span>
       </div>
     </div>
 
-    <div class="home__summary" *ngIf="todaySummary">
-      <div class="summary-card">
-        <span class="summary-card__label">Vendido hoy</span>
-        <span class="summary-card__value">
-          RD$ {{ todaySummary.totalSales | number : '1.0-0' }}
-        </span>
+    <div class="hero-card hero-card--metrics" *ngIf="summaryCards.length">
+      <div class="hero-card__header">
+        <h2>Resumen de hoy</h2>
+        <a routerLink="/resumen" class="hero-card__link">Ver detalle de ganancias →</a>
       </div>
-      <div class="summary-card">
-        <span class="summary-card__label">Fiado hoy</span>
-        <span class="summary-card__value">
-          RD$ {{ todaySummary.totalCreditSales | number : '1.0-0' }}
-        </span>
-      </div>
-      <div class="summary-card summary-card--highlight">
-        <span class="summary-card__label">Ganancia estimada</span>
-        <span class="summary-card__value">
-          RD$ {{ todaySummary.estimatedProfit | number : '1.0-0' }}
-        </span>
+      <div class="metrics-grid">
+        <article
+          class="metric-card"
+          *ngFor="let card of summaryCards"
+          [ngClass]="'metric-card--' + card.accent"
+        >
+          <div class="metric-card__icon">{{ card.icon }}</div>
+          <div class="metric-card__content">
+            <span class="metric-card__label">{{ card.label }}</span>
+            <span class="metric-card__value">
+              RD$ {{ card.value | number : '1.0-0' }}
+            </span>
+            <span class="metric-card__note" *ngIf="card.note">{{ card.note }}</span>
+          </div>
+        </article>
       </div>
     </div>
-
-    <a routerLink="/resumen" class="home__link"> Ver detalle de ganancias de hoy → </a>
   </header>
 
-  <main class="home__grid">
-    <a class="card card--primary" routerLink="/venta">
-      <div class="card__icon">💵</div>
-      <div class="card__title">Agregar vendido</div>
-      <div class="card__subtitle">Registrar el total vendido del día.</div>
-    </a>
+  <section class="home__section home__section--actions">
+    <div class="section-header">
+      <h2>Acciones rápidas</h2>
+      <p>Lo esencial del día en un clic.</p>
+    </div>
+    <div class="actions-grid">
+      <a class="action-card action-card--primary" routerLink="/venta">
+        <div class="action-card__icon">💵</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Agregar vendido</h3>
+          <p class="action-card__subtitle">Registrar el total vendido del día.</p>
+        </div>
+        <span class="action-card__hint">Atajo recomendado</span>
+      </a>
 
-    <a class="card card--primary" routerLink="/fiado">
-      <div class="card__icon">📝</div>
-      <div class="card__title">Agregar fiado</div>
-      <div class="card__subtitle">Registrar lo que quedó apuntado.</div>
-    </a>
+      <a class="action-card action-card--primary" routerLink="/fiado">
+        <div class="action-card__icon">📝</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Agregar fiado</h3>
+          <p class="action-card__subtitle">Registrar lo que quedó apuntado.</p>
+        </div>
+        <span class="action-card__hint">Controla los cobros</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/clientes-fiados">
-      <div class="card__icon">👥</div>
-      <div class="card__title">Clientes fiados</div>
-      <div class="card__subtitle">Ver quién debe y cuánto debe.</div>
-    </a>
+      <a class="action-card action-card--secondary" routerLink="/clientes-fiados">
+        <div class="action-card__icon">👥</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Clientes fiados</h3>
+          <p class="action-card__subtitle">Ver quién debe y cuánto debe.</p>
+        </div>
+        <span class="action-card__hint">Prioriza cobros</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/resumen">
-      <div class="card__icon">📊</div>
-      <div class="card__title">Ver ganancias</div>
-      <div class="card__subtitle">Resumen rápido del día.</div>
-    </a>
+      <a class="action-card action-card--secondary" routerLink="/resumen">
+        <div class="action-card__icon">📊</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Ver ganancias</h3>
+          <p class="action-card__subtitle">Resumen rápido del día.</p>
+        </div>
+        <span class="action-card__hint">Consulta tendencias</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/articulos">
-      <div class="card__icon">📦</div>
-      <div class="card__title">Artículos</div>
-      <div class="card__subtitle">Lista y precios de productos.</div>
-    </a>
+      <a class="action-card action-card--secondary" routerLink="/articulos">
+        <div class="action-card__icon">📦</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Artículos</h3>
+          <p class="action-card__subtitle">Lista y precios de productos.</p>
+        </div>
+        <span class="action-card__hint">Revisa inventario</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/clientes">
-      <div class="card__icon">🧍</div>
-      <div class="card__title">Clientes</div>
-      <div class="card__subtitle">Registrar y ver clientes del colmado.</div>
-    </a>
+      <a class="action-card action-card--secondary" routerLink="/clientes">
+        <div class="action-card__icon">🧍</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Clientes</h3>
+          <p class="action-card__subtitle">Registrar y ver clientes del colmado.</p>
+        </div>
+        <span class="action-card__hint">Mantén datos al día</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/pagos-proveedores">
-      <div class="card__icon">💸</div>
-      <div class="card__title">Pago a proveedores</div>
-      <div class="card__subtitle">Registrar y ver pagos recientes.</div>
-    </a>
+      <a class="action-card action-card--secondary" routerLink="/pagos-proveedores">
+        <div class="action-card__icon">💸</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Pagos a proveedores</h3>
+          <p class="action-card__subtitle">Registrar y ver pagos recientes.</p>
+        </div>
+        <span class="action-card__hint">Evita cargos extras</span>
+      </a>
 
-    <a class="card card--secondary" routerLink="/proveedores">
-      <div class="card__icon">🚚</div>
-      <div class="card__title">Proveedores</div>
-      <div class="card__subtitle">Registro y lista de proveedores.</div>
-    </a>
-  </main>
+      <a class="action-card action-card--secondary" routerLink="/proveedores">
+        <div class="action-card__icon">🚚</div>
+        <div class="action-card__body">
+          <h3 class="action-card__title">Proveedores</h3>
+          <p class="action-card__subtitle">Registro y lista de proveedores.</p>
+        </div>
+        <span class="action-card__hint">Actualiza contactos</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="home__section" *ngIf="insightCards.length">
+    <div class="section-header">
+      <h2>Instantáneas del día</h2>
+      <p>Seguimiento rápido del flujo de efectivo.</p>
+    </div>
+    <div class="insight-grid">
+      <article
+        class="panel panel--insight"
+        *ngFor="let insight of insightCards"
+        [ngClass]="'panel--' + insight.accent"
+      >
+        <div class="panel__icon">{{ insight.icon }}</div>
+        <div class="panel__body">
+          <h3>{{ insight.title }}</h3>
+          <p class="panel__value">
+            <ng-container [ngSwitch]="insight.format">
+              <span *ngSwitchCase="'count'">{{ insight.value }}</span>
+              <span *ngSwitchDefault>RD$ {{ insight.value | number : '1.0-0' }}</span>
+            </ng-container>
+          </p>
+          <p class="panel__caption">{{ insight.caption }}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="home__section home__section--panels">
+    <div class="panel-grid">
+      <article class="panel panel--activity">
+        <div class="panel__header">
+          <h2>Actividad reciente</h2>
+          <a routerLink="/resumen">Ver todo</a>
+        </div>
+        <ul class="activity-list">
+          <li class="activity-list__item" *ngFor="let item of recentActivity">
+            <div class="activity-list__icon" [ngClass]="'activity-list__icon--' + item.accent">
+              {{ item.icon }}
+            </div>
+            <div class="activity-list__body">
+              <span class="activity-list__title">{{ item.title }}</span>
+              <span class="activity-list__subtitle">{{ item.description }}</span>
+            </div>
+            <div class="activity-list__meta">
+              <span class="activity-list__amount" *ngIf="item.amount">
+                RD$ {{ item.amount | number : '1.0-0' }}
+              </span>
+              <span class="activity-list__time">{{ item.timeAgo }}</span>
+            </div>
+          </li>
+        </ul>
+      </article>
+
+      <div class="panel-stack">
+        <article class="panel panel--goals">
+          <div class="panel__header">
+            <h2>Objetivos semanales</h2>
+          </div>
+          <ul class="goal-list">
+            <li class="goal-list__item" *ngFor="let goal of weeklyGoals">
+              <div class="goal-list__icon">{{ goal.icon }}</div>
+              <div class="goal-list__body">
+                <span class="goal-list__title">{{ goal.title }}</span>
+                <span class="goal-list__caption">{{ goal.targetLabel }}</span>
+                <div class="progress-bar">
+                  <div class="progress-bar__fill" [style.width.%]="goal.progress"></div>
+                </div>
+              </div>
+              <span class="goal-list__progress">{{ goal.progress }}%</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="panel panel--tasks">
+          <div class="panel__header">
+            <h2>Tareas pendientes</h2>
+          </div>
+          <ul class="task-list">
+            <li class="task-list__item" *ngFor="let task of taskReminders">
+              <div class="task-list__icon">{{ task.icon }}</div>
+              <div class="task-list__body">
+                <span class="task-list__title">{{ task.title }}</span>
+                <span class="task-list__caption">{{ task.description }}</span>
+              </div>
+              <a
+                *ngIf="task.route"
+                [routerLink]="task.route"
+                class="task-list__action"
+              >
+                {{ task.actionLabel || 'Abrir' }} →
+              </a>
+            </li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
 </div>
