@@ -10,7 +10,7 @@
   </p>
 
   <ul *ngIf="customers.length > 0" class="list">
-    <li *ngFor="let c of customers" class="item">
+    <li *ngFor="let c of customers" class="item" [class.item--inactive]="c.balance <= 0">
       <div class="item__header">
         <span class="item__name">{{ c.customerName }}</span>
         <span class="item__balance">
@@ -19,8 +19,21 @@
       </div>
 
       <div class="item__details">
-        <span> Fiado: RD$ {{ c.totalCredit | number : '1.0-0' }} </span>
-        <span> Ha pagado: RD$ {{ c.totalPayments | number : '1.0-0' }} </span>
+        <span>Fiado: RD$ {{ c.totalCredit | number : '1.0-0' }}</span>
+        <span>Pagado: RD$ {{ c.totalPayments | number : '1.0-0' }}</span>
+      </div>
+
+      <!-- 🔽 Zona de pagos -->
+      <div class="item__payment">
+        <input type="number" min="1" placeholder="Monto a abonar" #amountInput />
+
+        <button type="button" class="btn btn--small" (click)="addPayment(c, amountInput.value)">
+          Abonar
+        </button>
+
+        <button type="button" class="btn btn--small btn--secondary" (click)="addFullPayment(c)">
+          Pago total
+        </button>
       </div>
     </li>
   </ul>

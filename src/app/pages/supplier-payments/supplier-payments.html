@@ -1,0 +1,74 @@
+<div class="page">
+  <header class="page__header">
+    <button class="back-btn" type="button" (click)="goBack()">
+      ←
+    </button>
+    <h2>Pago a proveedores</h2>
+  </header>
+
+  <section class="section">
+    <h3>Registrar pago</h3>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+      <label class="field">
+        <span>Nombre del proveedor</span>
+        <input type="text" formControlName="supplierName" />
+        <small *ngIf="supplierInvalid">
+          Escribe el nombre del proveedor.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Monto pagado (RD$)</span>
+        <input
+          type="number"
+          formControlName="amount"
+          inputmode="decimal"
+        />
+        <small *ngIf="amountInvalid">
+          Ingresa un monto mayor a 0.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Nota (opcional)</span>
+        <textarea formControlName="note" rows="2"></textarea>
+      </label>
+
+      <div class="actions">
+        <button type="submit" class="btn btn--primary">
+          Guardar pago
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="section">
+    <h3>Pagos recientes</h3>
+
+    <p *ngIf="recentPayments.length === 0" class="empty">
+      Aún no has registrado pagos a proveedores.
+    </p>
+
+    <ul *ngIf="recentPayments.length > 0" class="list">
+      <li *ngFor="let p of recentPayments" class="item">
+        <div class="item__main">
+          <span class="item__name">
+            {{ p.supplierName || 'Proveedor' }}
+          </span>
+          <span class="item__amount">
+            RD$ {{ p.amount | number : '1.0-0' }}
+          </span>
+        </div>
+        <div class="item__meta">
+          <span class="item__date">
+            {{ p.date }}
+          </span>
+          <span class="item__note" *ngIf="p.note">
+            {{ p.note }}
+          </span>
+        </div>
+      </li>
+    </ul>
+  </section>
+</div>

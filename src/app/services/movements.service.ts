@@ -96,7 +96,8 @@ export class MovementsService {
     return {
       date,
       ...totals,
-      estimatedProfit: totals.totalSales - totals.totalSupplierPayments,
+      estimatedProfit:
+        totals.totalSales + totals.totalCreditPayments - totals.totalSupplierPayments,
     };
   }
 

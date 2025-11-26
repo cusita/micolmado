@@ -101,3 +101,39 @@
   font-size: 1.2rem;
   cursor: pointer;
 }
+
+.item__payment {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+
+  input {
+    flex: 1;
+    border-radius: 0.6rem;
+    border: 1px solid #ccc;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+
+    &:focus {
+      border-color: #1d976c;
+      box-shadow: 0 0 0 2px rgba(29, 151, 108, 0.2);
+      outline: none;
+    }
+  }
+}
+
+.btn--small {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: #1d976c;
+  color: white;
+}
+
+.btn--secondary {
+  background: #e0e0e0;
+  color: #333;
+}

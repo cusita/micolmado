@@ -1,15 +1,53 @@
 <div class="page">
   <header class="page__header">
-    <button class="back-btn" routerLink="/">←</button>
+    <button class="back-btn" type="button" routerLink="/">←</button>
     <h2>Agregar fiado</h2>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="save()" class="form">
-    <label class="field">
-      <span>Nombre del cliente</span>
-      <input type="text" formControlName="customerName" />
-      <small *ngIf="customerInvalid">Escribe el nombre del cliente.</small>
-    </label>
+  <form [formGroup]="form" (ngSubmit)="save()" class="form"><label class="field field--autocomplete">
+  <span>Cliente</span>
+
+  <div class="autocomplete">
+    <input
+      #clientInput
+      type="text"
+      formControlName="clientSearch"
+      (input)="onClientSearchChange($any($event.target).value)"
+      (focus)="showSuggestions = true"
+      (blur)="onClientInputBlur()"
+      placeholder="Escribe nombre, número o nota"
+      autocomplete="off"
+    />
+
+    <ul
+      class="autocomplete__list"
+      *ngIf="showSuggestions && filteredClients.length > 0"
+    >
+      <li
+        class="autocomplete__item"
+        *ngFor="let c of filteredClients"
+        (click)="selectClient(c)"
+      >
+        <div class="item-main">
+          <span class="item-name">#{{ c.code }} - {{ c.name }}</span>
+        </div>
+        <div class="item-note" *ngIf="c.note">
+          {{ c.note }}
+        </div>
+      </li>
+    </ul>
+
+    <div
+      class="autocomplete__empty"
+      *ngIf="showSuggestions && filteredClients.length === 0"
+    >
+      No hay clientes que coincidan.
+    </div>
+  </div>
+
+  <small *ngIf="clientInvalid">Selecciona un cliente de la lista.</small>
+</label>
+
 
     <label class="field">
       <span>Monto fiado (RD$)</span>

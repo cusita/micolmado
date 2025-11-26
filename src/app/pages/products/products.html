@@ -1,0 +1,111 @@
+<div class="page">
+  <header class="page__header">
+    <button class="back-btn" type="button" routerLink="/">
+      ←
+    </button>
+    <h2>Artículos del colmado</h2>
+  </header>
+
+  <section class="section">
+    <h3>Agregar nuevo artículo</h3>
+
+    <form [formGroup]="form" (ngSubmit)="addProduct()" class="form">
+      <div class="form__row">
+        <label class="field">
+          <span>Nombre</span>
+          <input type="text" formControlName="name" />
+          <small *ngIf="nameInvalid">Escribe el nombre del producto.</small>
+        </label>
+
+        <label class="field">
+          <span>Categoría (opcional)</span>
+          <input type="text" formControlName="category" />
+        </label>
+      </div>
+
+      <div class="form__row">
+        <label class="field">
+          <span>Precio base (RD$)</span>
+          <input
+            type="number"
+            formControlName="basePrice"
+            inputmode="decimal"
+          />
+          <small *ngIf="basePriceInvalid">
+            Debe ser un valor mayor a 0.
+          </small>
+        </label>
+
+        <label class="field">
+          <span>% ganancia</span>
+          <input
+            type="number"
+            formControlName="markupPercent"
+            inputmode="decimal"
+          />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn--primary">Agregar</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="section">
+    <h3>Lista de artículos</h3>
+
+    <p *ngIf="products.length === 0" class="empty">
+      Aún no has agregado productos.
+    </p>
+
+    <div *ngIf="products.length > 0" class="table">
+      <div class="table__header">
+        <span>Producto</span>
+        <span>Base (RD$)</span>
+        <span>%</span>
+        <span>Venta (RD$)</span>
+        <span>Estado</span>
+      </div>
+
+      <div *ngFor="let p of products" class="table__row" [class.table__row--inactive]="!p.isActive">
+        <div class="table__cell table__cell--name">
+          <div class="name">{{ p.name }}</div>
+          <div class="category" *ngIf="p.category">
+            {{ p.category }}
+          </div>
+        </div>
+
+        <div class="table__cell">
+          <input
+            type="number"
+            [value]="p.basePrice"
+            (change)="updateProduct(p, 'basePrice', $any($event.target).value)"
+          />
+        </div>
+
+        <div class="table__cell">
+          <input
+            type="number"
+            [value]="p.markupPercent"
+            (change)="updateProduct(p, 'markupPercent', $any($event.target).value)"
+          />
+        </div>
+
+        <div class="table__cell table__cell--sale">
+          RD$ {{ p.salePrice | number : '1.0-0' }}
+        </div>
+
+        <div class="table__cell">
+          <button
+            type="button"
+            class="status-btn"
+            (click)="toggleActive(p)"
+          >
+            {{ p.isActive ? 'Activo' : 'Inactivo' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
