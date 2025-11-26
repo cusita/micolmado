@@ -9,12 +9,32 @@
   <section class="section">
     <h3>Registrar pago</h3>
 
-    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+    <!-- Si no hay proveedores activos -->
+    <p *ngIf="supplierItems.length === 0" class="empty">
+      No tienes proveedores registrados o activos.
+      <br />
+      Primero registra proveedores desde la sección
+      <strong>Proveedores</strong>.
+    </p>
+
+    <form
+      *ngIf="supplierItems.length > 0"
+      [formGroup]="form"
+      (ngSubmit)="save()"
+      class="form"
+    >
       <label class="field">
-        <span>Nombre del proveedor</span>
-        <input type="text" formControlName="supplierName" />
+        <span>Proveedor</span>
+
+        <app-search-box
+          [items]="supplierItems"
+          placeholder="Escribe el nombre o lo que provee"
+          [showWhenEmpty]="true"
+          (selected)="onSupplierSelected($event)"
+        ></app-search-box>
+
         <small *ngIf="supplierInvalid">
-          Escribe el nombre del proveedor.
+          Selecciona un proveedor de la lista.
         </small>
       </label>
 
