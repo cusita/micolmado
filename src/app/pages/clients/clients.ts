@@ -1,30 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ClientsService } from '../../services/clients.service';
 import { Client } from '../../models/movement.model';
+import { SearchFilter } from '../../shared/components/search-filter/search-filter';
 
 @Component({
   selector: 'app-clients',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, SearchFilter],
   templateUrl: './clients.html',
   styleUrl: './clients.scss',
 })
 export class Clients implements OnInit {
   form: FormGroup;
+  private allClients: Client[] = [];
   clients: Client[] = [];
 
-  constructor(
-    private readonly fb: FormBuilder,
-    private readonly clientsService: ClientsService
-  ) {
+  constructor(private readonly fb: FormBuilder, private readonly clientsService: ClientsService) {
     this.form = this.fb.nonNullable.group({
       code: ['', [Validators.required, Validators.minLength(1)]],
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -37,6 +31,7 @@ export class Clients implements OnInit {
   }
 
   loadClients(): void {
+    this.allClients = this.clientsService.getAll();
     this.clients = this.clientsService.getAll();
   }
 
@@ -48,6 +43,23 @@ export class Clients implements OnInit {
   get nameInvalid(): boolean {
     const c = this.form.get('name');
     return !!c && c.invalid && (c.dirty || c.touched);
+  }
+  
+  onSearchClients(term: string): void {
+    const value = term.toLowerCase().trim();
+
+    if (!value) {
+      this.clients = this.allClients.slice();
+      return;
+    }
+
+    this.clients = this.allClients.filter((c) => {
+      return (
+        c.code.toLowerCase().includes(value) ||
+        c.name.toLowerCase().includes(value) ||
+        (c.note?.toLowerCase().includes(value) ?? false)
+      );
+    });
   }
 
   save(): void {

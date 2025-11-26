@@ -1,8 +1,6 @@
 <div class="page">
   <header class="page__header">
-    <button class="back-btn" type="button" routerLink="/">
-      ←
-    </button>
+    <button class="back-btn" type="button" routerLink="/">←</button>
     <h2>Clientes</h2>
   </header>
 
@@ -36,18 +34,28 @@
   </section>
 
   <section class="section">
-    <h3>Lista de clientes</h3>
+    <p *ngIf="clients.length === 0" class="empty">Aún no has registrado clientes.</p>
 
-    <p *ngIf="clients.length === 0" class="empty">
-      Aún no has registrado clientes.
-    </p>
+    <section class="section">
+      <h3>Lista de clientes</h3>
+
+      <app-search-filter
+        label="Buscar cliente"
+        placeholder="Por número, nombre o referencia"
+        (search)="onSearchClients($event)"
+      ></app-search-filter>
+
+      <p *ngIf="clients.length === 0" class="empty">
+        No hay clientes que coincidan con la búsqueda.
+      </p>
+
+      <ul *ngIf="clients.length > 0" class="list">
+        <!-- tu *ngFor actual -->
+      </ul>
+    </section>
 
     <ul *ngIf="clients.length > 0" class="list">
-      <li
-        *ngFor="let c of clients"
-        class="item"
-        [class.item--inactive]="!c.isActive"
-      >
+      <li *ngFor="let c of clients" class="item" [class.item--inactive]="!c.isActive">
         <div class="item__main">
           <span class="item__code">#{{ c.code }}</span>
           <span class="item__name">{{ c.name }}</span>
@@ -57,11 +65,7 @@
           {{ c.note }}
         </p>
 
-        <button
-          type="button"
-          class="status-btn"
-          (click)="toggleActive(c)"
-        >
+        <button type="button" class="status-btn" (click)="toggleActive(c)">
           {{ c.isActive ? 'Activo' : 'Inactivo' }}
         </button>
       </li>

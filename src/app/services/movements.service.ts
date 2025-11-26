@@ -3,8 +3,10 @@ import { Injectable } from '@angular/core';
 import {
   CustomerCreditSummary,
   DailySummary,
+  MonthlySummary,
   Movement,
   MovementType,
+  YearlySummary,
 } from '../models/movement.model';
 
 @Injectable({ providedIn: 'root' })
@@ -155,6 +157,209 @@ export class MovementsService {
     return this.getDailySummary(this.getToday());
   }
 
+  getMonthlySummariesForYear(year: number): MonthlySummary[] {
+    const movements = this.getAll().filter((m) => {
+      const movementYear = Number(m.date.slice(0, 4));
+      return movementYear === year;
+    });
+
+    const map = new Map<
+      number,
+      {
+        totalSales: number;
+        totalCreditSales: number;
+        totalCreditPayments: number;
+        totalSupplierPayments: number;
+      }
+    >();
+
+    for (const m of movements) {
+      const month = Number(m.date.slice(5, 7)); // 1-12
+
+      if (!map.has(month)) {
+        map.set(month, {
+          totalSales: 0,
+          totalCreditSales: 0,
+          totalCreditPayments: 0,
+          totalSupplierPayments: 0,
+        });
+      }
+
+      const acc = map.get(month)!;
+
+      switch (m.type) {
+        case 'SALE':
+          acc.totalSales += m.amount;
+          break;
+        case 'CREDIT_SALE':
+          acc.totalCreditSales += m.amount;
+          break;
+        case 'CREDIT_PAYMENT':
+          acc.totalCreditPayments += m.amount;
+          break;
+        case 'SUPPLIER_PAYMENT':
+          acc.totalSupplierPayments += m.amount;
+          break;
+      }
+    }
+
+    const result: MonthlySummary[] = [];
+
+    for (const [month, totals] of map.entries()) {
+      result.push({
+        year,
+        month,
+        ...totals,
+        estimatedProfit:
+          totals.totalSales + totals.totalCreditPayments - totals.totalSupplierPayments,
+      });
+    }
+
+    // ordenar por mes
+    result.sort((a, b) => a.month - b.month);
+
+    return result;
+  }
+
+  getYearlySummaries(): YearlySummary[] {
+    const movements = this.getAll();
+
+    const map = new Map<
+      number,
+      {
+        totalSales: number;
+        totalCreditSales: number;
+        totalCreditPayments: number;
+        totalSupplierPayments: number;
+      }
+    >();
+
+    for (const m of movements) {
+      const year = Number(m.date.slice(0, 4));
+
+      if (!map.has(year)) {
+        map.set(year, {
+          totalSales: 0,
+          totalCreditSales: 0,
+          totalCreditPayments: 0,
+          totalSupplierPayments: 0,
+        });
+      }
+
+      const acc = map.get(year)!;
+
+      switch (m.type) {
+        case 'SALE':
+          acc.totalSales += m.amount;
+          break;
+        case 'CREDIT_SALE':
+          acc.totalCreditSales += m.amount;
+          break;
+        case 'CREDIT_PAYMENT':
+          acc.totalCreditPayments += m.amount;
+          break;
+        case 'SUPPLIER_PAYMENT':
+          acc.totalSupplierPayments += m.amount;
+          break;
+      }
+    }
+
+    const result: YearlySummary[] = [];
+
+    for (const [year, totals] of map.entries()) {
+      result.push({
+        year,
+        ...totals,
+        estimatedProfit:
+          totals.totalSales + totals.totalCreditPayments - totals.totalSupplierPayments,
+      });
+    }
+
+    // ordenar por año ascendente
+    result.sort((a, b) => a.year - b.year);
+
+    return result;
+  }
+
+  getAvailableYears(): number[] {
+    const movements = this.getAll();
+    const years = new Set<number>();
+
+    for (const m of movements) {
+      if (m.date && m.date.length >= 4) {
+        years.add(Number(m.date.slice(0, 4)));
+      }
+    }
+
+    return Array.from(years).sort((a, b) => a - b);
+  }
+
+  getDailySummariesForMonth(year: number, month: number): DailySummary[] {
+    const movements = this.getAll().filter((m) => {
+      if (!m.date) return false;
+      const y = Number(m.date.slice(0, 4));
+      const mo = Number(m.date.slice(5, 7)); // 1-12
+      return y === year && mo === month;
+    });
+
+    const map = new Map<
+      string,
+      {
+        totalSales: number;
+        totalCreditSales: number;
+        totalCreditPayments: number;
+        totalSupplierPayments: number;
+      }
+    >();
+
+    for (const m of movements) {
+      const date = m.date; // 'YYYY-MM-DD'
+
+      if (!map.has(date)) {
+        map.set(date, {
+          totalSales: 0,
+          totalCreditSales: 0,
+          totalCreditPayments: 0,
+          totalSupplierPayments: 0,
+        });
+      }
+
+      const acc = map.get(date)!;
+
+      switch (m.type) {
+        case 'SALE':
+          acc.totalSales += m.amount;
+          break;
+        case 'CREDIT_SALE':
+          acc.totalCreditSales += m.amount;
+          break;
+        case 'CREDIT_PAYMENT':
+          acc.totalCreditPayments += m.amount;
+          break;
+        case 'SUPPLIER_PAYMENT':
+          acc.totalSupplierPayments += m.amount;
+          break;
+      }
+    }
+
+    const result: DailySummary[] = [];
+
+    for (const [date, totals] of map.entries()) {
+      result.push({
+        date,
+        ...totals,
+        // usa la misma fórmula que uses en getDailySummary
+        estimatedProfit:
+          totals.totalSales + totals.totalCreditPayments - totals.totalSupplierPayments,
+      });
+    }
+
+    // ordenar por fecha ascendente
+    result.sort((a, b) => a.date.localeCompare(b.date));
+
+    return result;
+  }
+
   private persistMovement(data: Omit<Movement, 'id' | 'date'> & { type: MovementType }): Movement {
     const movement: Movement = {
       id: Date.now().toString(),
@@ -168,7 +373,11 @@ export class MovementsService {
   }
 
   private getToday(): string {
-    return new Date().toISOString().slice(0, 10);
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // 01-12
+    const day = String(d.getDate()).padStart(2, '0'); // 01-31
+    return `${year}-${month}-${day}`; // YYYY-MM-DD
   }
 
   private isMovementCandidate(value: unknown): value is Movement {

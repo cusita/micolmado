@@ -1,20 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  Validators,
-  FormGroup,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { MovementsService } from '../../services/movements.service';
 import { ClientsService } from '../../services/clients.service';
-import { Client } from '../../models/movement.model';
+import { Client, SearchItem } from '../../models/movement.model';
+import { SearchBox } from '../../shared/components/search-box/search-box/search-box';
 
 @Component({
   selector: 'app-add-credit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, SearchBox],
   templateUrl: './add-credit.html',
   styleUrl: './add-credit.scss',
 })
@@ -27,6 +23,9 @@ export class AddCredit implements OnInit {
 
   form: FormGroup;
 
+  clientItems: SearchItem<Client>[] = [];
+  selectedClient: Client | null = null;
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly movements: MovementsService,
@@ -34,17 +33,27 @@ export class AddCredit implements OnInit {
     private readonly router: Router
   ) {
     this.form = this.fb.nonNullable.group({
-    clientSearch: [''],
-    clientId: ['', [Validators.required]],
-    amount: [0, [Validators.required, Validators.min(1)]],
-    note: [''],
-  });
-
+      clientSearch: [''],
+      clientId: ['', [Validators.required]],
+      amount: [0, [Validators.required, Validators.min(1)]],
+      note: [''],
+    });
   }
 
   ngOnInit(): void {
     this.clients = this.clientsService.getAll().filter((c) => c.isActive);
     this.filteredClients = this.clients;
+    this.clientItems = this.clients.map((c) => ({
+      id: c.id,
+      label: `#${c.code} - ${c.name}`,
+      sublabel: c.note,
+      payload: c,
+    }));
+  }
+
+  onClientSelected(item: SearchItem<Client>) {
+    this.selectedClient = item.payload;
+    this.form.controls['clientId'].setValue(item.payload.id);
   }
 
   get amountInvalid(): boolean {
@@ -114,11 +123,7 @@ export class AddCredit implements OnInit {
       return;
     }
 
-    this.movements.addCreditSale(
-      Number(amount),
-      client.name,
-      note || undefined
-    );
+    this.movements.addCreditSale(Number(amount), client.name, note || undefined);
 
     alert('Fiado registrado correctamente');
     this.router.navigateByUrl('/');

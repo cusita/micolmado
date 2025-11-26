@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/ngsw-worker.js", "destination": "/ngsw-worker.js" },
+    { "source": "/ngsw.json", "destination": "/ngsw.json" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" }
+  ]
+}

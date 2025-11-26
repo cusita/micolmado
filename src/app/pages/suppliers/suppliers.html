@@ -1,0 +1,110 @@
+<div class="page">
+  <header class="page__header">
+    <button type="button" class="back-btn" routerLink="/">
+      ←
+    </button>
+    <h2>Proveedores</h2>
+  </header>
+
+  <section class="section">
+    <h3>Registrar proveedor</h3>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+      <div class="form__row">
+        <label class="field">
+          <span>Nombre</span>
+          <input type="text" formControlName="name" />
+          <small *ngIf="nameInvalid">
+            Escribe el nombre del proveedor.
+          </small>
+        </label>
+
+        <label class="field">
+          <span>Contacto</span>
+          <input
+            type="text"
+            formControlName="contact"
+            placeholder="Teléfono, WhatsApp, correo..."
+          />
+          <small *ngIf="contactInvalid">
+            Escribe un contacto válido.
+          </small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Descripción (qué provee)</span>
+        <input
+          type="text"
+          formControlName="description"
+          placeholder="Huevos, arroz, refrescos, etc."
+        />
+        <small *ngIf="descriptionInvalid">
+          Describe qué te provee este proveedor.
+        </small>
+      </label>
+
+      <label class="field">
+        <span>Nota (opcional)</span>
+        <textarea
+          formControlName="note"
+          rows="2"
+          placeholder="Ej: trae los lunes, paga solo en efectivo, etc."
+        ></textarea>
+      </label>
+
+      <div class="actions">
+        <button type="submit" class="btn btn--primary">
+          Guardar
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="section">
+    <h3>Lista de proveedores</h3>
+
+    <app-search-filter
+      label="Buscar proveedor"
+      placeholder="Por nombre, contacto, descripción o nota"
+      (search)="onSearchSuppliers($event)"
+    ></app-search-filter>
+
+    <p *ngIf="suppliers.length === 0" class="empty">
+      No hay proveedores que coincidan con la búsqueda.
+    </p>
+
+    <ul *ngIf="suppliers.length > 0" class="list">
+      <li
+        *ngFor="let s of suppliers"
+        class="item"
+        [class.item--inactive]="!s.isActive"
+      >
+        <div class="item__header">
+          <span class="item__name">{{ s.name }}</span>
+          <button
+            type="button"
+            class="status-btn"
+            (click)="toggleActive(s)"
+          >
+            {{ s.isActive ? 'Activo' : 'Inactivo' }}
+          </button>
+        </div>
+
+        <div class="item__line">
+          <span class="label">Contacto:</span>
+          <span class="value">{{ s.contact }}</span>
+        </div>
+
+        <div class="item__line">
+          <span class="label">Qué provee:</span>
+          <span class="value">{{ s.description }}</span>
+        </div>
+
+        <p class="item__note" *ngIf="s.note">
+          {{ s.note }}
+        </p>
+      </li>
+    </ul>
+  </section>
+</div>

@@ -9,6 +9,18 @@
     No hay clientes con deudas registradas por ahora.
   </p>
 
+  <section class="section">
+    <h3>Clientes fiados</h3>
+
+    <app-search-filter
+      label="Buscar deudor"
+      placeholder="Por nombre"
+      (search)="onSearchDebtors($event)"
+    ></app-search-filter>
+
+    <!-- tu lista actual usando customers -->
+  </section>
+
   <ul *ngIf="customers.length > 0" class="list">
     <li *ngFor="let c of customers" class="item" [class.item--inactive]="c.balance <= 0">
       <div class="item__header">

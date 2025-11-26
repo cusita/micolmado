@@ -1,0 +1,49 @@
+<div class="search-box">
+  <div class="search-box__control">
+    <input
+      type="text"
+      [placeholder]="placeholder"
+      [value]="searchTerm"
+      (input)="onInputChange($any($event.target).value)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      autocomplete="off"
+    />
+
+    <button
+      *ngIf="searchTerm"
+      type="button"
+      class="search-box__clear"
+      (click)="clear()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <!-- Lista de sugerencias -->
+  <ul
+    class="search-box__list"
+    *ngIf="showSuggestions && filteredItems.length > 0"
+  >
+    <li
+      class="search-box__item"
+      *ngFor="let item of filteredItems"
+      (click)="selectItem(item)"
+    >
+      <div class="item-main">
+        <span class="item-label">{{ item.label }}</span>
+        <span class="item-sublabel" *ngIf="item.sublabel">
+          {{ item.sublabel }}
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <!-- Sin resultados -->
+  <div
+    class="search-box__empty"
+    *ngIf="showSuggestions && filteredItems.length === 0"
+  >
+    {{ noResultsText }}
+  </div>
+</div>

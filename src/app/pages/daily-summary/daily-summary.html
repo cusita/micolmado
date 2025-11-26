@@ -1,33 +1,134 @@
 <div class="page">
   <header class="page__header">
-    <button class="back-btn" routerLink="/">←</button>
-    <h2>Resumen del día</h2>
+    <button class="back-btn" type="button" routerLink="/">←</button>
+    <h2>Resumen</h2>
   </header>
 
-  <div class="card">
-    <span>Vendido hoy</span>
-    <strong>RD$ {{ summary.totalSales }}</strong>
-  </div>
+  <!-- 🔹 Resumen de HOY -->
+  <section class="section">
+    <h3>Hoy ({{ todaySummary.date }})</h3>
 
-  <div class="card">
-    <span>Fiado hoy</span>
-    <strong>RD$ {{ summary.totalCreditSales }}</strong>
-  </div>
+    <div class="cards">
+      <div class="card">
+        <span class="label">Vendido (contado)</span>
+        <span class="value"> RD$ {{ todaySummary.totalSales | number : '1.0-0' }} </span>
+      </div>
 
-  <div class="card">
-    <span>Cobrado de fiado</span>
-    <strong>RD$ {{ summary.totalCreditPayments }}</strong>
-  </div>
+      <div class="card">
+        <span class="label">Fiado hoy</span>
+        <span class="value"> RD$ {{ todaySummary.totalCreditSales | number : '1.0-0' }} </span>
+      </div>
 
-  <div class="card">
-    <span>Pago a proveedores</span>
-    <strong>RD$ {{ summary.totalSupplierPayments }}</strong>
-  </div>
+      <div class="card">
+        <span class="label">Cobrado de fiado</span>
+        <span class="value"> RD$ {{ todaySummary.totalCreditPayments | number : '1.0-0' }} </span>
+      </div>
 
-  <div class="card total">
-    <span>Ganancia estimada</span>
-    <strong>RD$ {{ summary.estimatedProfit }}</strong>
-  </div>
+      <div class="card">
+        <span class="label">Pagos a proveedores</span>
+        <span class="value">
+          RD$
+          {{ todaySummary.totalSupplierPayments | number : '1.0-0' }}
+        </span>
+      </div>
 
-  <a routerLink="/" class="back">← Volver</a>
+      <div class="card card--highlight">
+        <span class="label">Ganancia estimada</span>
+        <span class="value"> RD$ {{ todaySummary.estimatedProfit | number : '1.0-0' }} </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Resumen por MES de un año -->
+  <section class="section" *ngIf="availableYears.length > 0">
+    <div class="section__header">
+      <h3>Por mes</h3>
+
+      <label class="year-select">
+        <span>Año:</span>
+        <select [value]="selectedYear" (change)="onYearChange($any($event.target).value)">
+          <option *ngFor="let y of availableYears" [value]="y">
+            {{ y }}
+          </option>
+        </select>
+      </label>
+    </div>
+
+    <p *ngIf="monthlySummaries.length === 0" class="empty">No hay datos para este año.</p>
+
+    <div *ngIf="monthlySummaries.length > 0" class="table">
+      <div class="table__header">
+        <span>Mes</span>
+        <span>Vendido</span>
+        <span>Cobrado fiado</span>
+        <span>Proveedores</span>
+        <span>Ganancia</span>
+      </div>
+
+      <div
+        class="table__row table__row--clickable"
+        *ngFor="let m of monthlySummaries"
+        (click)="showDailyDetailsForMonth(m)"
+      >
+        <span>{{ getMonthName(m.month) }}</span>
+        <span>RD$ {{ m.totalSales | number : '1.0-0' }}</span>
+        <span>RD$ {{ m.totalCreditPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ m.totalSupplierPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ m.estimatedProfit | number : '1.0-0' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" *ngIf="selectedMonthForDetails">
+    <h3>
+      Detalle por día –
+      {{ getMonthName(selectedMonthForDetails.month) }}
+      {{ selectedMonthForDetails.year }}
+    </h3>
+
+    <p *ngIf="dailySummariesForSelectedMonth.length === 0" class="empty">
+      No hay datos diarios para este mes.
+    </p>
+
+    <div class="table" *ngIf="dailySummariesForSelectedMonth.length > 0">
+      <div class="table__header">
+        <span>Día</span>
+        <span>Vendido</span>
+        <span>Cobrado fiado</span>
+        <span>Proveedores</span>
+        <span>Ganancia</span>
+      </div>
+
+      <div class="table__row" *ngFor="let d of dailySummariesForSelectedMonth">
+        <span>{{ d.date.slice(8, 10) }}</span>
+        <span>RD$ {{ d.totalSales | number : '1.0-0' }}</span>
+        <span>RD$ {{ d.totalCreditPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ d.totalSupplierPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ d.estimatedProfit | number : '1.0-0' }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Resumen por AÑO -->
+  <section class="section" *ngIf="yearlySummaries.length > 0">
+    <h3>Por año</h3>
+
+    <div class="table">
+      <div class="table__header">
+        <span>Año</span>
+        <span>Vendido</span>
+        <span>Cobrado fiado</span>
+        <span>Proveedores</span>
+        <span>Ganancia</span>
+      </div>
+
+      <div class="table__row" *ngFor="let y of yearlySummaries">
+        <span>{{ y.year }}</span>
+        <span>RD$ {{ y.totalSales | number : '1.0-0' }}</span>
+        <span>RD$ {{ y.totalCreditPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ y.totalSupplierPayments | number : '1.0-0' }}</span>
+        <span>RD$ {{ y.estimatedProfit | number : '1.0-0' }}</span>
+      </div>
+    </div>
+  </section>
 </div>

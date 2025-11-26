@@ -1,8 +1,6 @@
 <div class="page">
   <header class="page__header">
-    <button class="back-btn" type="button" routerLink="/">
-      ←
-    </button>
+    <button class="back-btn" type="button" routerLink="/">←</button>
     <h2>Artículos del colmado</h2>
   </header>
 
@@ -26,23 +24,13 @@
       <div class="form__row">
         <label class="field">
           <span>Precio base (RD$)</span>
-          <input
-            type="number"
-            formControlName="basePrice"
-            inputmode="decimal"
-          />
-          <small *ngIf="basePriceInvalid">
-            Debe ser un valor mayor a 0.
-          </small>
+          <input type="number" formControlName="basePrice" inputmode="decimal" />
+          <small *ngIf="basePriceInvalid"> Debe ser un valor mayor a 0. </small>
         </label>
 
         <label class="field">
           <span>% ganancia</span>
-          <input
-            type="number"
-            formControlName="markupPercent"
-            inputmode="decimal"
-          />
+          <input type="number" formControlName="markupPercent" inputmode="decimal" />
         </label>
       </div>
 
@@ -53,11 +41,25 @@
   </section>
 
   <section class="section">
-    <h3>Lista de artículos</h3>
+    <p *ngIf="products.length === 0" class="empty">Aún no has agregado productos.</p>
 
-    <p *ngIf="products.length === 0" class="empty">
-      Aún no has agregado productos.
-    </p>
+    <section class="section">
+      <h3>Lista de artículos</h3>
+
+      <app-search-filter
+        label="Buscar artículo"
+        placeholder="Por nombre o categoría"
+        (search)="onSearchProducts($event)"
+      ></app-search-filter>
+
+      <p *ngIf="products.length === 0" class="empty">
+        No hay artículos que coincidan con la búsqueda.
+      </p>
+
+      <div *ngIf="products.length > 0" class="table">
+        <!-- tabla que ya tienes -->
+      </div>
+    </section>
 
     <div *ngIf="products.length > 0" class="table">
       <div class="table__header">
@@ -92,16 +94,10 @@
           />
         </div>
 
-        <div class="table__cell table__cell--sale">
-          RD$ {{ p.salePrice | number : '1.0-0' }}
-        </div>
+        <div class="table__cell table__cell--sale">RD$ {{ p.salePrice | number : '1.0-0' }}</div>
 
         <div class="table__cell">
-          <button
-            type="button"
-            class="status-btn"
-            (click)="toggleActive(p)"
-          >
+          <button type="button" class="status-btn" (click)="toggleActive(p)">
             {{ p.isActive ? 'Activo' : 'Inactivo' }}
           </button>
         </div>

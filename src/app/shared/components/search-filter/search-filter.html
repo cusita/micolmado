@@ -1,0 +1,23 @@
+<div class="search">
+  <label *ngIf="label" class="search__label">{{ label }}</label>
+
+  <div class="search__control">
+    <span class="search__icon">🔍</span>
+
+    <input
+      type="text"
+      [placeholder]="placeholder"
+      [value]="term"
+      (input)="onInput($any($event.target).value)"
+    />
+
+    <button
+      *ngIf="term"
+      type="button"
+      class="search__clear"
+      (click)="clear()"
+    >
+      ✕
+    </button>
+  </div>
+</div>

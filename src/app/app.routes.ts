@@ -7,6 +7,7 @@ import { CustomersDebt } from './pages/customers-debt/customers-debt';
 import { Products } from './pages/products/products';
 import { Clients } from './pages/clients/clients';
 import { SupplierPayments } from './pages/supplier-payments/supplier-payments';
+import { Suppliers } from './pages/suppliers/suppliers';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -17,4 +18,5 @@ export const routes: Routes = [
   { path: 'articulos', component: Products },
   { path: 'clientes', component: Clients },
   { path: 'pagos-proveedores', component: SupplierPayments },
+  { path: 'proveedores', component: Suppliers },
 ];
